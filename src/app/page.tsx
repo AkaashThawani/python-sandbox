@@ -3,11 +3,18 @@
 import { useState, FormEvent } from 'react';
 import Spinner from './spinner'; // Adjusted path as per your last message
 
+
+type JsonPrimitive = string | number | boolean | null;
+type JsonObject = { [key: string]: JsonValue }; // Allows nested objects
+type JsonArray = JsonValue[];
+type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+
 interface ApiResponse {
   stdout: string;
-  result?: any;
+  result?: JsonValue;
   error?: string;
 }
+
 
 const defaultUserCodePlaceholder = `import pandas as pd
 
@@ -62,14 +69,19 @@ export default function Home() {
       });
       const data: ApiResponse = await response.json();
       if (!response.ok) {
-        let errorMessage = `API Error (Status ${response.status}): ${data.error || response.statusText || 'Unknown API error'}`;
-        setApiResponse(data); 
+        const errorMessage = `API Error (Status ${response.status}): ${data.error || response.statusText || 'Unknown API error'}`;
+        setApiResponse(data);
         setNetworkError(errorMessage);
         return;
       }
       setApiResponse(data);
-    } catch (err: any) {
-      setNetworkError(err.message || 'Failed to connect or parse response.');
+    } catch (err) { // Type 'err' more specifically, or handle as unknown
+      console.error("Fetch/Network error:", err);
+      if (err instanceof Error) {
+        setNetworkError(err.message || 'Failed to connect or parse response.');
+      } else {
+        setNetworkError(String(err) || 'An unknown error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -83,13 +95,13 @@ export default function Home() {
           Python Sandbox
         </h1>
         <p className="mt-2 text-sm md:text-base  max-w-2xl mx-auto">
-         Securely run Python snippets with pandas & numpy. More libraries and features coming soon! Your code is wrapped in main().
+          Securely run Python snippets with pandas & numpy. More libraries and features coming soon! Your code is wrapped in main().
         </p>
       </header>
 
       {/* Main content area now takes remaining height */}
       <main className="w-full max-w-7xl mx-auto flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0 flex-grow overflow-hidden"> {/* Added mx-auto, flex-grow, overflow-hidden */}
-        
+
         {/* Left Column: Code Input and Controls - Takes full available height */}
         <section className="md:w-1/2 bg-slate-800/70 backdrop-blur-md shadow-2xl rounded-xl p-6 border border-slate-700 flex flex-col h-full">
           <form onSubmit={handleSubmit} className="space-y-4 flex-grow flex flex-col"> {/* Reduced space-y */}
@@ -106,8 +118,8 @@ export default function Home() {
                   className="w-full h-full p-4 bg-slate-900 border border-slate-700 rounded-lg shadow-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 text-slate-50 font-mono text-sm transition-colors duration-150 placeholder-slate-500 resize-none"
                 />
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setUserCode('')}
                     className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded text-slate-300"
                     title="Clear code"
@@ -141,7 +153,7 @@ export default function Home() {
           <h2 className="text-xl md:text-2xl font-semibold text-slate-200 border-b border-slate-700 pb-3 mb-4 shrink-0">
             Execution Output
           </h2>
-          
+
           <div className="flex-grow space-y-4 overflow-y-auto pr-2 custom-scrollbar">
             {isLoading && !apiResponse && !networkError && (
               <div className="flex flex-col items-center justify-center h-full text-slate-400">
@@ -161,8 +173,8 @@ export default function Home() {
               <>
                 {apiResponse.error && (
                   <div className="p-4 bg-amber-700/30 border border-amber-600 text-amber-200 rounded-lg">
-                      <h3 className="font-bold text-md mb-1 text-amber-100">API Error:</h3>
-                      <pre className="whitespace-pre-wrap break-words text-sm font-mono">{apiResponse.error}</pre>
+                    <h3 className="font-bold text-md mb-1 text-amber-100">API Error:</h3>
+                    <pre className="whitespace-pre-wrap break-words text-sm font-mono">{apiResponse.error}</pre>
                   </div>
                 )}
                 {apiResponse.stdout && (
@@ -177,24 +189,24 @@ export default function Home() {
                   <div>
                     <h3 className="text-lg font-medium text-slate-300 mb-1">Result (from main()):</h3>
                     <pre className="bg-black/60 p-3 rounded-md text-xs text-emerald-400 whitespace-pre-wrap break-words overflow-x-auto max-h-60 shadow-inner">
-                      {typeof apiResponse.result === 'object' 
-                        ? JSON.stringify(apiResponse.result, null, 2) 
+                      {typeof apiResponse.result === 'object'
+                        ? JSON.stringify(apiResponse.result, null, 2)
                         : String(apiResponse.result)}
                     </pre>
                   </div>
                 )}
                 {!apiResponse.error && !apiResponse.stdout && !(apiResponse.hasOwnProperty('result') && apiResponse.result !== null && apiResponse.result !== undefined) && !isLoading && (
-                    <p className="text-slate-400 italic text-sm">Script executed with no output or result.</p>
+                  <p className="text-slate-400 italic text-sm">Script executed with no output or result.</p>
                 )}
               </>
             )}
             {!isLoading && !apiResponse && !networkError && (
-                 <p className="text-slate-500 italic text-center py-10">Output will appear here after execution.</p>
+              <p className="text-slate-500 italic text-center py-10">Output will appear here after execution.</p>
             )}
           </div>
         </section>
       </main>
-      
+
 
     </div>
   );
