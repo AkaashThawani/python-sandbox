@@ -184,7 +184,7 @@ export default function EditorPage() {
       console.log('🔧 Using local API:', apiUrl);
     } else {
       // Production - use .env or show error
-      apiUrl = process.env.NEXT_PUBLIC_FLASK_API_URL + '/execute';
+      apiUrl = process.env.NEXT_PUBLIC_FLASK_API_URL || '';
       if (!apiUrl) {
         setNetworkError('API URL not configured. For production, set NEXT_PUBLIC_FLASK_API_URL in your .env file.');
         setIsLoading(false);
