@@ -27,10 +27,10 @@ export default function Landing() {
                   </span>
                 </h1>
                 <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-lg">
-                  Write, run, and test Python code directly in your browser with optimized support for
+                  Write, run, and analyze Python code with real-time performance metrics, Big O complexity analysis, and optimized support for
                   <span className="text-violet-400 font-bold"> data science</span>,
                   <span className="text-pink-400 font-bold"> visualization</span>, and
-                  <span className="text-purple-400 font-bold"> web development</span> libraries
+                  <span className="text-purple-400 font-bold"> algorithm analysis</span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
@@ -191,16 +191,16 @@ export default function Landing() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-emerald-400 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
                   <div className="text-xs font-mono text-emerald-400/60 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                     03
                   </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-slate-100">Lightning Fast</h3>
+                <h3 className="text-lg font-bold mb-2 text-slate-100">Performance Analytics</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">
-                  Real-time execution with instant feedback. No setup required - just write and run your Python code.
+                  Real-time Big O complexity analysis, execution timing, memory usage, and detailed performance metrics for every code run.
                 </p>
               </div>
             </div>
@@ -228,16 +228,16 @@ export default function Landing() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-yellow-400 group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                     </svg>
                   </div>
                   <div className="text-xs font-mono text-yellow-400/60 bg-yellow-500/10 px-2 py-0.5 rounded-full">
                     05
                   </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-slate-100">Flexible Execution</h3>
+                <h3 className="text-lg font-bold mb-2 text-slate-100">Algorithm Analysis</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">
-                  Choose between Script mode (direct execution) or Function mode (main() wrapper) based on your needs.
+                  Real-time Big O complexity analysis (O(1), O(n), O(n²), etc.) to understand and optimize your algorithms as you code.
                 </p>
               </div>
             </div>
