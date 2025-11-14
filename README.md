@@ -17,6 +17,10 @@ This full-stack web application provides a secure online Python code execution e
 - **Communication**: REST API using JSON payloads for code transmission and result retrieval
 - **Isolation**: Backend runs Python scripts in isolated processes to prevent system interference
 
+## Links
+- **Backend Repository**: [Python Code Execution API](https://github.com/AkaashThawani/flaskAPI)
+- **Frontend Repository**: [Python Code Sandbox](https://github.com/AkaashThawani/python-sandbox)
+
 ## Tech Stack
 ### Frontend
 - **Framework**: Next.js 15.3.2 with App Router
@@ -46,7 +50,7 @@ This full-stack web application provides a secure online Python code execution e
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/AkaashThawani/python-sandbox.git
    cd python-sandbox
    ```
 
