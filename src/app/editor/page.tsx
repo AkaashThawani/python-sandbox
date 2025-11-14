@@ -258,7 +258,7 @@ function renderDataFrame(df: DataFrameResult): React.JSX.Element {
             {displayData.map((row, rowIdx) => (
               <tr key={rowIdx} className="hover:bg-slate-700/30">
                 <td className="border border-slate-600/50 p-2 text-slate-500 font-mono">
-                  {df.index[rowIdx]}
+                  {String(df.index[rowIdx])}
                 </td>
                 {df.columns.map((col, colIdx) => (
                   <td key={colIdx} className="border border-slate-600/50 p-2 text-slate-300 font-mono">
