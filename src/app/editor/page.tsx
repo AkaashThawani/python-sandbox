@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import Link from 'next/link';
 import Editor from '@monaco-editor/react';
 import Spinner from '../spinner';
@@ -14,6 +14,23 @@ interface ApiResponse {
   stdout: string;
   result?: JsonValue;
   error?: string;
+}
+
+interface LibraryInfo {
+  import: string;
+  example: string;
+  description: string;
+}
+
+interface LibraryCategory {
+  title: string;
+  libraries: { [key: string]: LibraryInfo };
+}
+
+interface LibrariesResponse {
+  categories: { [key: string]: LibraryCategory };
+  installed_packages: { [key: string]: { name: string; version: string; summary: string; homepage: string } };
+  total_libraries: number;
 }
 
 const defaultScriptCode = `import pandas as pd
@@ -63,8 +80,40 @@ export default function EditorPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [networkError, setNetworkError] = useState<string | null>(null);
   const [hasUserEdited, setHasUserEdited] = useState<boolean>(false);
-  const [editorInstance, setEditorInstance] = useState<any | null>(null);
+  const [editorInstance, setEditorInstance] = useState<{ trigger: (source: string, handlerId: string, payload: unknown) => void } | null>(null);
   const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [libraries, setLibraries] = useState<LibrariesResponse | null>(null);
+  const [librariesLoading, setLibrariesLoading] = useState<boolean>(true);
+
+  // Fetch libraries on component mount
+  useEffect(() => {
+    const fetchLibraries = async () => {
+      try {
+        const isLocalDev = typeof window !== 'undefined' &&
+          (window.location.hostname === 'localhost' ||
+           window.location.hostname === '127.0.0.1' ||
+           window.location.hostname.includes('.local'));
+
+        const librariesUrl = isLocalDev
+          ? 'http://localhost:5000/libraries'
+          : (process.env.NEXT_PUBLIC_FLASK_API_URL || '') + '/libraries';
+
+        if (!librariesUrl) return;
+
+        const response = await fetch(librariesUrl);
+        if (response.ok) {
+          const data: LibrariesResponse = await response.json();
+          setLibraries(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch libraries:', error);
+      } finally {
+        setLibrariesLoading(false);
+      }
+    };
+
+    fetchLibraries();
+  }, []);
 
   const handleModeChange = (newMode: ExecutionMode) => {
     if (!hasUserEdited) {
@@ -86,7 +135,7 @@ export default function EditorPage() {
     }
   };
 
-  const handleEditorDidMount = (editor: any) => {
+  const handleEditorDidMount = (editor: { trigger: (source: string, handlerId: string, payload: unknown) => void }) => {
     setEditorInstance(editor);
   };
 
@@ -345,16 +394,34 @@ export default function EditorPage() {
                 <div className="h-full space-y-4 overflow-y-auto custom-scrollbar">
                   {/* Supported Libraries Info */}
                   <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/50">
-                    <h4 className="text-sm font-semibold text-slate-200 mb-2">📚 Supported Libraries</h4>
-                    <div className="text-xs text-slate-300 space-y-1">
-                      <div><strong>Data Science:</strong> pandas, numpy, scipy</div>
-                      <div><strong>Visualization:</strong> matplotlib, seaborn, plotly</div>
-                      <div><strong>Image Processing:</strong> pillow</div>
-                      <div><strong>NLP:</strong> nltk</div>
-                      <div><strong>Web:</strong> requests, beautifulsoup4, lxml</div>
-                      <div><strong>Data Formats:</strong> openpyxl, xlrd</div>
-                      <div><strong>Standard Library:</strong> json, os, sys, math, random, datetime, re</div>
-                    </div>
+                    <h4 className="text-sm font-semibold text-slate-200 mb-2">
+                      📚 Supported Libraries {libraries ? `(${libraries.total_libraries})` : ''}
+                    </h4>
+                    {librariesLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Spinner size="w-4 h-4" />
+                        <span className="ml-2 text-xs text-slate-400">Loading libraries...</span>
+                      </div>
+                    ) : libraries ? (
+                      <div className="text-xs text-slate-300 space-y-2 max-h-40 overflow-y-auto">
+                        {Object.entries(libraries.categories).map(([categoryKey, category]) => (
+                          <div key={categoryKey}>
+                            <strong>{category.title}:</strong>{' '}
+                            {Object.keys(category.libraries).join(', ')}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-slate-400">
+                        <div><strong>Data Science:</strong> pandas, numpy, scipy</div>
+                        <div><strong>Visualization:</strong> matplotlib, seaborn, plotly</div>
+                        <div><strong>Image Processing:</strong> pillow</div>
+                        <div><strong>NLP:</strong> nltk</div>
+                        <div><strong>Web:</strong> requests, beautifulsoup4, lxml</div>
+                        <div><strong>Data Formats:</strong> openpyxl, xlrd</div>
+                        <div><strong>Standard Library:</strong> json, os, sys, math, random, datetime, re</div>
+                      </div>
+                    )}
                   </div>
 
                   {isLoading && !apiResponse && !networkError && (
