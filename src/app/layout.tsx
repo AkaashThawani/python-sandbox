@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Python Code Sandbox",
   description: "Write, run, and test Python code directly in your browser with data science and visualization libraries",
+  verification: {
+    google: "5_KMTy_kqP7eAx8biUZf-ywa5rZtbh3rM8Fc3StC_qQ",
+  },
 };
 
 export default function RootLayout({
